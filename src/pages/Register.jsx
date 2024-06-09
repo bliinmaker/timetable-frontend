@@ -1,129 +1,153 @@
-import { Formik } from "formik";
-import React, { useState } from "react";
-import LoginGithub from "react-login-github";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Formik, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
+import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/UNiVERSiTY.svg";
 import "../index.css";
+import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
-const formCommentSchema = yup.object().shape({
-  email: yup.string().required("Поле Email необходимо заполнить"),
-  password: yup.string().required("Поле Пароль необходимо заполнить"),
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.withCredentials = true;
+
+const client = axios.create({
+  baseURL: "http://127.0.0.1:8000",
 });
+
+const formValidationSchema = yup.object({
+  email: yup
+    .string()
+    .email("Введите верный email")
+    .required("Поле Email обязательно"),
+  username: yup.string().required("Поле Username обязательно"),
+  password: yup.string().required("Поле Пароль обязательно"),
+});
+
 export const Register = () => {
-  function onSuccess(e) {
-    fetch("http://127.0.0.1:8000/github/", {
-      method: "POST",
-      body: JSON.stringify({ auth_token: e.code }),
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-    })
-      .then((res) => res.json())
-      // .then((response) => {
-      //   document.getElementById("email_id").innerText = response["email"];
-      //   document.getElementById("auth_token").innerText = response["tokens"];
-      // });
-  }
-  function onFailure(e) {
-    alert(e);
-  }
-  const onSubmitHandlerComment = async (values, { resetForm }) => {
-    const { email, password } = values;
-    console.log(values);
+  const navigation = useNavigate();
+  const isAuth = useAuth();
 
-    // createComment(histPlaceId, {
-    // 	email,
-    // 	password,
-    // }).then(resp => {
-    // 	console.log(resp)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // 	getHistPlace(histPlaceId).then(resp => {
-    // 		if (resp.status === 200) {
-    // 			setCommentsFresh(resp.data.comments)
-    // 		}
-    // 	})
-    // 	resetForm()
-    // })
+    const email = e.target.elements.email.value;
+    const password = e.target.elements.password.value;
+    const username = e.target.elements.username.value;
+
+    const values = {
+      email,
+      username,
+      password,
+    };
+    try {
+      if (isAuth) {
+        await client.post("/api/logout/", values);
+      }
+      await client.post("/api/register/", values);
+      await client.post("/api/login/", values);
+      navigation("/");
+    } catch (error) {
+      console.error("Ошибка при регистрации", error);
+      alert("Ошибка при регистрации");
+    }
   };
 
   return (
-    <div className="register">
-      <div className="register-wrapper">
-        <div className="register__logo">
-          <img src={Logo} alt="" />
+    <div className="auth">
+      <div className="auth-wrapper">
+        <div className="auth__logo">
+          <img src={Logo} alt="University Logo" />
         </div>
-        <h3 className="register__title">зарегестрироваться</h3>
+        <h3 className="auth__title">Регистрация</h3>
         <Formik
-          initialValues={{
-            email: "",
-            password: "",
-          }}
-          validationSchema={formCommentSchema}
-          onSubmit={onSubmitHandlerComment}
+          initialValues={{ email: "", password: "" }}
+          validationSchema={formValidationSchema}
+          onSubmit={handleSubmit}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-          }) => (
-            <form
-              className="register__form"
-              onSubmit={handleSubmit}
-              method="post"
-            >
-              {touched.email && errors.email && (
-                <span style={{ color: "tomato" }}>{errors.email}</span>
-              )}
-              <div className="register__form__item">
-                <p>email</p>
-                <input
-                  value={values.nickName}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  placeholder="Ваше email"
-                  type="text"
+          {({ isSubmitting }) => (
+            <form className="auth__form" onSubmit={handleSubmit}>
+              <div className="auth__form__item">
+                <label htmlFor="email">Email</label>
+                <Field
+                  id="email"
                   name="email"
-                ></input>
+                  type="email"
+                  placeholder="Ваш email"
+                />
               </div>
-              {touched.password && errors.password && (
-                <span style={{ color: "tomato" }}>{errors.password}</span>
-              )}
-              <div className="register__form__item">
-                <p>введите пароль</p>
-                <input
-                  value={values.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  type="text"
+              <ErrorMessage
+                name="email"
+                component="div"
+                style={{
+                  color: "tomato",
+                  fontSize: "10px",
+                  fontWeight: "600",
+                  textAlign: "left",
+                  width: "100%",
+                  marginBottom: "5px",
+                }}
+              />
+              <div className="auth__form__item">
+                <label htmlFor="email">Username</label>
+                <Field
+                  id="username"
+                  name="username"
+                  type="username"
+                  placeholder="Ваш username"
+                />
+              </div>
+              <ErrorMessage
+                name="username"
+                component="div"
+                style={{
+                  color: "tomato",
+                  fontSize: "10px",
+                  fontWeight: "600",
+                  textAlign: "left",
+                  width: "100%",
+                  marginBottom: "5px",
+                }}
+              />
+              <div className="auth__form__item">
+                <label htmlFor="password">Пароль</label>
+                <Field
+                  id="password"
                   name="password"
+                  type="password"
                   placeholder="Ваш пароль"
-                ></input>
+                />
               </div>
-              <div className="register__form__send">
-                <button type="submit">создать аккаунт!</button>
+              <ErrorMessage
+                name="password"
+                component="div"
+                style={{
+                  color: "tomato",
+                  fontSize: "10px",
+                  fontWeight: "600",
+                  textAlign: "left",
+                  width: "100%",
+                  marginBottom: "5px",
+                }}
+              />
+              <div className="auth__form__send">
+                <button
+                  type="submit"
+                  style={{ backgroundColor: isSubmitting ? "#929292" : "#000" }}
+                  disabled={isSubmitting}
+                >
+                  Зарегистрироваться
+                </button>
               </div>
             </form>
           )}
         </Formik>
-        <p className="register__text">
-          же есть аккаунт?
-          <Link className="register__link" to="/auth">
-            <span>Войти</span>
+        <p className="auth__text">
+          есть аккаунт?
+          <Link className="auth__link" to="/auth">
+            <span> Авторизоваться</span>
           </Link>
         </p>
-
-        <LoginGithub
-          clientId="1ba9607aaa7690399da2"
-          onSuccess={onSuccess}
-          onFailure={onFailure}
-          className="github"
-        >
-          <h2 className="github-name">Войти через github</h2>
-        </LoginGithub>
       </div>
     </div>
   );

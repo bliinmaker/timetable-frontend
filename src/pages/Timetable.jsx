@@ -1,299 +1,107 @@
-import React from "react";
-import arrows from "../assets/arrows.svg";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { EventItem } from "../components/eventItem/EventItem";
+import axios from "axios";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
-const Timetable = () => {
-  // useEffect(() => {
-  //     if(localStorage.getItem('access_token') === null){
-  //         window.location.href = '/auth'
-  //     }
-  //     else{
-  //      (async () => {
-  //        try {
-  //          const {data} = await axios.get(
-  //                         'http://localhost:8000/home/', {
-  //                          headers: {
-  //                             'Content-Type': 'application/json'
-  //                          }}
-  //                        );
-  //          setMessage(data.message);
-  //       } catch (e) {
-  //         console.log('not auth')
-  //       }
-  //      })()};
-  //  }, []);
+export const Timetable = () => {
+  const [student, setStudent] = useState([]);
+  const [lessons, setLessons] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const userResponse = await axios.get("http://127.0.0.1:8000/api/user/");
+
+      if (userResponse) {
+        const studentResponse = await axios.get(
+          `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/student/`
+        );
+        setStudent(studentResponse.data);
+        console.log(studentResponse.data.group.title);
+        const lessonsResponse = await axios.get(
+          "http://127.0.0.1:8000/api/lessons"
+        );
+        setLessons(lessonsResponse.data);
+      }
+    } catch (error) {
+      console.error("Ошибка при загрузке данных:", error);
+    }
+  };
+
+  const filteredLessons =
+    lessons && student
+      ? lessons.filter((lesson) => lesson.group.title === student.group.title)
+      : [];
+
+  const events = filteredLessons.map((lesson) => ({
+    id: lesson.id,
+    title: lesson.subject.title,
+    start: lesson.start_time,
+    end: lesson.end_time,
+    extendedProps: {
+      subjectTitle: lesson.subject.title,
+      teacherFullName: lesson.teacher.full_name,
+      groupTitle: lesson.group.title,
+    },
+  }));
+
   return (
     <div className="timetable">
       <div className="timetable__up">
         <div className="timetable-wrap-text">
           <h1 className="timetable__title">расписание</h1>
-          <div className="timetable-wrap-text__wrap">
-            <p className="timetable__text">
-              16-22 <span>октября</span>
-            </p>
-            <img src={arrows} alt="" />
-          </div>
         </div>
-        <div className="timetable__userinfo">И.И.Иванова - 1-11-23</div>
-      </div>
-      <div className="timetable__down">
-        <div className="timetable__down__time">
-          <p className="timetable__down__time__text">
-            9:00<span>10:30</span>
-          </p>
-          <p className="timetable__down__time__text">
-            10:45<span>12:15</span>
-          </p>
-          <p className="timetable__down__time__text">
-            13:15<span>14:45</span>
-          </p>
-          <p className="timetable__down__time__text">
-            15:00<span>16:30</span>
-          </p>
-          <p className="timetable__down__time__text">
-            16:45<span>18:15</span>
-          </p>
-          <p className="timetable__down__time__text">
-            18:30<span>20:00</span>
-          </p>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Понедельник</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Вторник</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Среда</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-          
-          </div>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Четверг</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-            
-          </div>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Пятница</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-           
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-            
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra ">
-            
-          </div>
-        </div>
-        <div className="timetable__down__items">
-          <h3>Суббота</h3>
-          {/* {Response.map(() => {
-                    <div className="timetable__down__item">
-
-                    </div>
-                })} */}
-          <div className="timetable__down__item timetable__down__item_extra">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
-          <div className="timetable__down__item timetable__down__item_extra">
-            {/* <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p> */}
-          </div>
-          <div className="timetable__down__item">
-            <h3 className="timetable__down__title">Высшая Математика</h3>
-            <p className="timetable__down__type">Лекция</p>
-            <p className="timetable__down__audience">кабинет 6-205</p>
-            <p className="timetable__down__teacher">К.В.Иванов</p>
-          </div>
+        <div className="timetable__userinfo">
+          {student && student?.group?.title
+            ? `${student.full_name} - ${student.group.title}`
+            : ""}
         </div>
       </div>
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView="timeGridWeek"
+        headerToolbar={{
+          start: "today prev,next",
+          center: "title",
+          end: "timeGridWeek,timeGridDay",
+        }}
+        buttonText={{
+          today: "сегодня",
+          month: "месяц",
+          week: "неделя",
+          day: "день",
+          list: "лист",
+        }}
+        events={events}
+        eventContent={({ event }) => (
+          <EventItem
+            subjectTitle={event.extendedProps.subjectTitle}
+            teacherFullName={event.extendedProps.teacherFullName}
+            groupTitle={event.extendedProps.groupTitle}
+          />
+        )}
+        locale="ru"
+        locales={["ru"]} // Добавьте русскую локаль
+        localeOptions={{
+          titles: {
+            today: "cегодня", // Переопределение строки "today"
+          },
+        }}
+        timeZone="Europe/Moscow"
+        slotMinTime="9:00:00"
+        slotMaxTime="21:00:00"
+        firstDay={1}
+        hiddenDays={[0]}
+        eventBackgroundColor="#8090c4"
+        slotDuration="00:15:00"
+      />
     </div>
   );
 };
-
-export default Timetable;
 

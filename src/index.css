@@ -1,8 +1,44 @@
+/* @import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
+@import "../node_modules/@bitnoi.se/react-scheduler/dist/style.css"; */
+:root {
+  --fc-button-bg-color: #9da7c8;
+  --fc-button-border-color: #929292;
+  --fc-button-text-color: #fff;
+  --fc-button-active-bg-color: #9da7c8;
+  --fc-button-active-border-color: #929292;
+  --fc-button-hover-bg-color: #9da7c8;
+  --fc-button-hover-border-color: #929292;
+  --fc-event-border-color: none;
+  --fc-small-font-size: 0.6rem;
+}
+.fc .fc-timegrid-axis-cushion {
+  flex-shrink: 0;
+  max-width: 60px;
+  opacity: 0;
+}
+
+.fc-event-title-container {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.fc-v-event .fc-event-main-frame {
+  padding: 5px;
+  display: grid;
+  gap: 5px;
+}
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Prosto One";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -25,9 +61,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: 145px;
-
   background-color: #9da7c8;
-
   padding: 22px 0;
 }
 
@@ -39,9 +73,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: 45px;
-
   list-style: none;
-
   padding: 0;
   padding-left: 27px;
   margin: 0;
@@ -49,15 +81,12 @@ code {
 
 .navbar__link {
   display: block;
-
   color: #000000;
   font-family: "Prosto One";
   font-size: 20px;
   text-decoration: none;
-
   transition: background-color 0.2s;
   border-radius: 22px 0 0 22px;
-
   padding: 15px 19px;
 }
 
@@ -92,19 +121,27 @@ h4 {
   flex-direction: column;
   height: 100vh;
   margin: 0;
+  align-items: center;
 }
 .auth__form {
   display: grid;
   justify-content: center;
+  width: 300px;
 }
 .auth__logo {
-  margin-top: -20px;
+  margin-top: -40px;
   text-align: center;
   margin-bottom: 110px;
 }
-.auth__form__item {
-  margin-bottom: 20px;
+.auth__form__item input,
+label {
+  display: grid;
+  margin-bottom: 5px;
+  width: 100%;
   text-align: left;
+}
+.auth__form__item_content {
+  display: grid;
 }
 .auth__title {
   text-align: center;
@@ -138,6 +175,7 @@ h4 {
 }
 .auth__link {
   text-decoration: none;
+  color: #000;
 }
 .auth__form__send {
   display: flex;
@@ -148,6 +186,7 @@ h4 {
   margin-top: 20px;
   border-radius: 10px;
   background: #000;
+  cursor: pointer;
   color: #fff;
   text-align: center;
   font-size: 16px;
@@ -156,116 +195,14 @@ h4 {
   width: 100%;
   height: 50px;
   border: none;
-  font-family: Poppins;
   font-size: 16px;
   font-weight: 600;
   line-height: 125%;
 }
 .auth__form__item p {
-  font-family: Poppins;
   font-size: 14px;
   font-weight: 400;
   line-height: 125%;
-}
-/* Register */
-.register {
-  padding: 60px 75px;
-  padding-bottom: 0px;
-}
-.register-wrapper {
-  display: grid;
-  background: #9da7c8;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  margin: 0;
-}
-.register__form {
-  display: grid;
-  justify-content: center;
-}
-.register__form__item p {
-  font-family: Poppins;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 125%;
-}
-.register__logo {
-  margin-top: -20px;
-  text-align: center;
-  margin-bottom: 110px;
-}
-.register__form__item {
-  margin-bottom: 20px;
-  text-align: left;
-}
-.register__title {
-  text-align: center;
-  font-family: Prosto One;
-  font-size: 40px;
-  font-weight: 400;
-  margin-bottom: 40px;
-}
-.register__text {
-  margin-top: 22px;
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 125%;
-  margin-bottom: 20px;
-}
-.register__link {
-  text-decoration: none;
-}
-.register__text span {
-  color: #000;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 125%;
-}
-.register__form input {
-  border-radius: 10px;
-  border: 1px solid #d8dadc;
-  background: #fff;
-  outline: none;
-  padding: 18px 16px;
-}
-.register__form__send {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.register__form__send button {
-  margin-top: 20px;
-  border-radius: 10px;
-  background: #000;
-  color: #fff;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 125%;
-  width: 100%;
-  height: 50px;
-  border: none;
-  font-family: Poppins;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 125%;
-}
-.github {
-  margin: 0 auto;
-  width: 160px;
-  height: 30px;
-  border: none;
-  background-color: #000;
-  border-radius: 18px;
-  color: #fff;
-}
-.github-name {
-  font-size: 12px;
 }
 /* Timetable */
 .timetable {
@@ -373,4 +310,92 @@ h4 {
 .timetable__down__item_extra {
   border-radius: 11px;
   background-color: transparent;
+}
+
+/* Teachers */
+.teachers {
+  padding: 93px 46px;
+}
+.teachers__up {
+  display: flex;
+  justify-content: space-between;
+}
+.teachers__title {
+  font-family: Prosto One;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  margin-bottom: 17px;
+  border-bottom: 3px solid #9da7c8;
+}
+.teachers__content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.teacher__card {
+  padding: 10px;
+  width: calc(25% - 20px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: 0.3s all;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  min-width: calc(25% - 20px);
+}
+.teacher__card:hover {
+  scale: 1.05;
+}
+.teacher__card__teacher {
+  font-size: 18px;
+  padding-bottom: 7px;
+}
+
+.teacher__card__subject {
+  font-size: 12px;
+}
+
+/* Student */
+.student {
+  padding: 93px 46px;
+}
+.student__up {
+  display: flex;
+  justify-content: space-between;
+}
+.student__title {
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  margin-bottom: 17px;
+  border-bottom: 3px solid #9da7c8;
+}
+.student__content {
+  display: grid;
+}
+.student__content__title {
+  font-weight: 600;
+  padding-bottom: 10px;
+}
+.student__content p span {
+  font-weight: 600;
+}
+.student__content__title_extra {
+  padding-top: 25px;
+}
+
+.waiting {
+  display: grid;
+  margin-top: 100px;
+  text-align: center;
+}
+.waiting__title {
+  font-size: 40px;
+}
+.waiting__link {
+  padding-top: 50px;
+  text-decoration: none;
+  color: #000;
 }

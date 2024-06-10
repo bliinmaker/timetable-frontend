@@ -2,24 +2,40 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { useUser } from "../../hooks/useUser";
+import { useStudent } from "../../hooks/useStudent";
+import { useTeacher } from "../../hooks/useTeacher";
 
 export const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const { isAuth, isLoadingAuth } = useAuth();
-  const { isUser, isLoadingUser } = useUser();
+  const { isStudent, isLoadingStudent } = useStudent();
+  const { isTeacher, isLoadingTeacher } = useTeacher();
 
   useEffect(() => {
     if (!isAuth && !isLoadingAuth) {
       navigate("/auth");
     }
-    if (!isUser && !isLoadingUser) {
+    if (
+      isAuth &&
+      !isStudent &&
+      !isLoadingStudent &&
+      !isTeacher &&
+      !isLoadingTeacher
+    ) {
       navigate("/waitingForAccess");
     }
-  }, [isAuth, isLoadingAuth, isUser, isLoadingUser, navigate]);
+  }, [
+    isAuth,
+    isLoadingAuth,
+    isStudent,
+    isLoadingStudent,
+    isTeacher,
+    isLoadingTeacher,
+    navigate,
+  ]);
 
   return (
-    <>{!isLoadingAuth && !isLoadingUser && isAuth && isUser && children}</>
+    <>{!isLoadingAuth && isAuth && (isStudent || isTeacher) && children}</>
   );
 };
 

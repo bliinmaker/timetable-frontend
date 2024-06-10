@@ -7,7 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
 export const Timetable = () => {
-  const [student, setStudent] = useState([]);
+  const [user, setUser] = useState([]);
   const [lessons, setLessons] = useState([]);
 
   useEffect(() => {
@@ -19,11 +19,24 @@ export const Timetable = () => {
       const userResponse = await axios.get("http://127.0.0.1:8000/api/user/");
 
       if (userResponse) {
-        const studentResponse = await axios.get(
-          `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/student/`
-        );
-        setStudent(studentResponse.data);
-        console.log(studentResponse.data.group.title);
+        if (userResponse) {
+          axios
+            .get(
+              `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/student/`
+            )
+            .then((response) => {
+              setUser(response.data);
+            })
+            .catch(
+              axios
+                .get(
+                  `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/teacher/`
+                )
+                .then((response) => {
+                  setUser(response.data);
+                })
+            );
+        }
         const lessonsResponse = await axios.get(
           "http://127.0.0.1:8000/api/lessons"
         );
@@ -35,8 +48,10 @@ export const Timetable = () => {
   };
 
   const filteredLessons =
-    lessons && student
-      ? lessons.filter((lesson) => lesson.group.title === student.group.title)
+    lessons && user.group
+      ? lessons.filter((lesson) => lesson.group.title === user.group.title)
+      : user.subjects
+      ? lessons.filter((lesson) => lesson.teacher.full_name === user.full_name)
       : [];
 
   const events = filteredLessons.map((lesson) => ({
@@ -58,9 +73,10 @@ export const Timetable = () => {
           <h1 className="timetable__title">расписание</h1>
         </div>
         <div className="timetable__userinfo">
-          {student && student?.group?.title
-            ? `${student.full_name} - ${student.group.title}`
+          {user && user?.group?.title
+            ? `${user.full_name} - ${user.group.title}`
             : ""}
+          {user && user?.subjects ? `${user.full_name}` : ""}
         </div>
       </div>
       <FullCalendar
@@ -87,10 +103,10 @@ export const Timetable = () => {
           />
         )}
         locale="ru"
-        locales={["ru"]} // Добавьте русскую локаль
+        locales={["ru"]}
         localeOptions={{
           titles: {
-            today: "cегодня", // Переопределение строки "today"
+            today: "cегодня",
           },
         }}
         timeZone="Europe/Moscow"

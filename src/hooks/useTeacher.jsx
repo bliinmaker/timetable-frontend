@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export const useUser = () => {
-  const [isUser, setIsUser] = useState(false);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
+export const useTeacher = () => {
+  const [isTeacher, setIsTeacher] = useState(false);
+  const [isLoadingTeacher, setIsLoadingTeacher] = useState(true);
 
   useEffect(() => {
     const checkUserStatus = async () => {
@@ -12,21 +12,21 @@ export const useUser = () => {
         const userResponse = await axios.get("http://127.0.0.1:8000/api/user/");
         if (userResponse) {
           await axios.get(
-            `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/student/`
+            `http://127.0.0.1:8000/api/user/${userResponse.data.user.id}/teacher/`
           );
-          setIsUser(true);
+          setIsTeacher(true);
         }
       } catch (error) {
         console.error(error);
-        setIsUser(false);
+        setIsTeacher(false);
       } finally {
-        setIsLoadingUser(false);
+        setIsLoadingTeacher(false);
       }
     };
 
     checkUserStatus();
   }, []);
 
-  return { isUser, isLoadingUser };
+  return { isTeacher, isLoadingTeacher };
 };
 

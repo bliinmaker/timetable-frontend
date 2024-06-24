@@ -21,7 +21,10 @@ const formValidationSchema = yup.object({
     .email("Введите верный email")
     .required("Поле Email обязательно"),
   username: yup.string().required("Поле Username обязательно"),
-  password: yup.string().required("Поле Пароль обязательно"),
+  password: yup
+    .string()
+    .required("Поле Пароль обязательно")
+    .min(8, "Пароль должен быть не менее 8 символов"),
 });
 
 export const Register = () => {
